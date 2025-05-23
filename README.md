@@ -1,6 +1,6 @@
 # Event Emitter
 
-一个功能强大的 TypeScript 事件发射器实现，支持同步和异步事件处理，优先级机制，以及完整的事件管理功能。
+一个功能简单的 TypeScript 事件发射器实现，支持同步和异步事件处理，优先级机制，以及完整的事件管理功能。
 
 ## 特性
 
@@ -15,9 +15,9 @@
 ## 安装
 
 ```bash
-npm install event-emitter
+npm install @mrtian/event-emitter
 # 或
-yarn add event-emitter
+yarn add @mrtian/event-emitter
 ```
 
 ## 快速开始
