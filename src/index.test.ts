@@ -1,7 +1,7 @@
 import { EventEmitter } from './index';
 
 describe('EventEmitter', () => {
-  let emitter: EventEmitter;
+  let emitter: EventEmitter
 
   beforeEach(() => {
     emitter = new EventEmitter();
@@ -10,8 +10,8 @@ describe('EventEmitter', () => {
   describe('on', () => {
     it('应该添加监听器并返回taskId', () => {
       const listener = jest.fn();
-      const taskId = emitter.on('test', listener);
-      
+      const taskId = emitter.on('demo', listener);
+
       expect(taskId).toBeDefined();
       expect(taskId).toMatch(/^event_\d+_\d+$/);
     });
@@ -69,7 +69,7 @@ describe('EventEmitter', () => {
     it('应该通过taskId移除监听器', () => {
       const listener = jest.fn();
       const taskId = emitter.on('test', listener);
-      
+
       emitter.offById('test', taskId);
       emitter.emit('test', 'data');
 
@@ -181,7 +181,7 @@ describe('EventEmitter', () => {
   describe('priority', () => {
     it('应该按优先级顺序调用监听器', () => {
       const calls: number[] = [];
-      
+
       emitter.on('test', () => calls.push(1), false, 1);
       emitter.on('test', () => calls.push(2), false, 2);
       emitter.on('test', () => calls.push(0), false, 0);
@@ -202,7 +202,7 @@ describe('EventEmitter', () => {
       emitter.on('test', listener2, false, 2);
 
       const listeners = emitter.getListeners('test');
-      
+
       expect(listeners).toHaveLength(2);
       expect(listeners[0].priority).toBe(2);
       expect(listeners[1].priority).toBe(1);
@@ -235,4 +235,4 @@ describe('EventEmitter', () => {
       expect(names).toContain('test2');
     });
   });
-}); 
+});

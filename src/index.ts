@@ -34,7 +34,7 @@ class EventListener {
 }
 
 /** 事件发射器类 */
-export class EventEmitter<E extends Record<string, any[]>> {
+export class EventEmitter<E extends Record<string, any[]> = any> {
   /** 存储所有事件监听器的Map */
   private listeners = new Map<keyof E, Map<ListenerCallback<any>, EventListener>>();
   /** 临时存储需要移除的监听器 */
