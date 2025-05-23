@@ -17,7 +17,7 @@ const logError = (message: string, error: Error): void => {
 class EventListener {
   /** 用于生成唯一ID的计数器 */
   private static idCounter = 0;
-  
+
   constructor(
     /** 监听器回调函数 */
     public listener: ListenerCallback<any>,
@@ -34,9 +34,9 @@ class EventListener {
 }
 
 /** 事件发射器类 */
-export class EventEmitter {
+export class EventEmitter<E extends Record<string, any[]>> {
   /** 存储所有事件监听器的Map */
-  private listeners = new Map<string, Map<ListenerCallback<any>, EventListener>>();
+  private listeners = new Map<keyof E, Map<ListenerCallback<any>, EventListener>>();
   /** 临时存储需要移除的监听器 */
   private toRemove: ListenerCallback<any>[] = [];
 
@@ -48,7 +48,7 @@ export class EventEmitter {
    * @param priority 优先级，数字越大优先级越高
    * @returns 监听器的唯一标识
    */
-  on<T>(type: string, listener: ListenerCallback<T>, once = false, priority = 0): string {
+  on<T>(type: keyof E, listener: ListenerCallback<T>, once = false, priority = 0): string {
     if (!type) {
       throw new Error('事件类型不能为空');
     }
@@ -74,7 +74,7 @@ export class EventEmitter {
    * @param priority 优先级
    * @returns 监听器的唯一标识
    */
-  once<T>(type: string, listener: ListenerCallback<T>, priority = 0): string {
+  once<T>(type: keyof E, listener: ListenerCallback<T>, priority = 0): string {
     return this.on<T>(type, listener, true, priority);
   }
 
@@ -83,7 +83,7 @@ export class EventEmitter {
    * @param type 事件类型
    * @param listener 要移除的监听器
    */
-  off(type: string, listener: ListenerCallback<any>): void {
+  off(type: (keyof E), listener: ListenerCallback<any>): void {
     const listeners = this.listeners.get(type);
     if (!listeners) return;
 
@@ -130,13 +130,13 @@ export class EventEmitter {
    * @param type 事件类型
    * @param data 事件数据
    */
-  emit<T>(type: string, data: T): void {
+  emit<T>(type: (keyof E), data: T): void {
     const listeners = this.listeners.get(type);
     if (!listeners) return;
 
     // 清空待移除数组
     this.toRemove.length = 0;
-    
+
     // 按优先级排序监听器
     const sortedListeners = Array.from(listeners.entries())
       .sort(([, a], [, b]) => b.priority - a.priority);
@@ -149,7 +149,7 @@ export class EventEmitter {
           this.toRemove.push(listener);
         }
       } catch (error) {
-        logError(`事件监听器执行出错，事件类型："${type}"`, error as Error);
+        logError(`事件监听器执行出错，事件类型："${type as string}"`, error as Error);
       }
     }
 
@@ -168,13 +168,13 @@ export class EventEmitter {
    * @param type 事件类型
    * @param data 事件数据
    */
-  async emitAsync<T>(type: string, data: T): Promise<void> {
+  async emitAsync<T>(type: (keyof E), data: T): Promise<void> {
     const listeners = this.listeners.get(type);
     if (!listeners) return;
 
     // 清空待移除数组
     this.toRemove.length = 0;
-    
+
     // 按优先级排序监听器
     const sortedListeners = Array.from(listeners.entries())
       .sort(([, a], [, b]) => b.priority - a.priority);
@@ -187,7 +187,7 @@ export class EventEmitter {
           this.toRemove.push(listener);
         }
       } catch (error) {
-        logError(`异步事件监听器执行出错，事件类型："${type}"`, error as Error);
+        logError(`异步事件监听器执行出错，事件类型："${type as string}"`, error as Error);
       }
     }
 
@@ -206,7 +206,7 @@ export class EventEmitter {
    * @param type 事件类型
    * @returns 监听器数量
    */
-  listenerCount(type: string): number {
+  listenerCount(type: (keyof E)): number {
     return this.listeners.get(type)?.size || 0;
   }
 
@@ -215,7 +215,7 @@ export class EventEmitter {
    * @returns 事件类型数组
    */
   eventNames(): string[] {
-    return Array.from(this.listeners.keys());
+    return Array.from(this.listeners.keys()) as string[];
   }
 
   /**
@@ -223,7 +223,7 @@ export class EventEmitter {
    * @param type 事件类型
    * @returns 监听器数组，按优先级排序
    */
-  getListeners(type: string): { listener: ListenerCallback<any>, priority: number }[] {
+  getListeners(type: keyof E): { listener: ListenerCallback<any>, priority: number }[] {
     const listeners = this.listeners.get(type);
     if (!listeners) return [];
 

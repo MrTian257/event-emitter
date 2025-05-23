@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "description": "A TypeScript event emitter implementation with support for synchronous and asynchronous event handling, priority mechanism, and complete event management",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "browser": "dist/index.browser.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist",
@@ -31,10 +29,11 @@
   },
   "homepage": "https://github.com/mrtian/event-emitter#readme",
   "scripts": {
-    "build": "tsc && tsc -p tsconfig.browser.json",
+    "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
-    "prepublishOnly": "npm run build && npm test"
+    "prepublishOnly": "npm run build && npm test",
+    "prepare": "npm run build"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
